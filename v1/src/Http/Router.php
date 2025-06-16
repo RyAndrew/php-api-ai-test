@@ -6,7 +6,6 @@ use App\Http\ApiRequest;
 use App\Middleware\AuthMiddleware;
 use App\Exceptions\ValidationException;
 use App\Exceptions\NotFoundException;
-use App\Exceptions\AuthException;
 
 class Router 
 {
@@ -32,16 +31,11 @@ class Router
 
     public function handleRequest(): void 
     {
-        try {
-            $this->request = new ApiRequest();
-            $this->parseRoute();
-            $this->runMiddleware();
-            $response = $this->dispatchController();
-            $this->sendResponse($response);
-            
-        } catch (Exception $e) {
-            $this->handleException($e);
-        }
+        $this->request = new ApiRequest();
+        $this->parseRoute();
+        $this->runMiddleware();
+        $response = $this->dispatchController();
+        $this->sendResponse($response);
     }
 
     private function parseRoute(): void 
@@ -150,26 +144,6 @@ class Router
         if ($response === null) {
             // 204 No Content (like DELETE)
             exit();
-        }
-        
-        echo json_encode($response, JSON_PRETTY_PRINT);
-    }
-
-    private function handleException(\Exception $e): void 
-    {
-        $response = ['error' => true, 'message' => $e->getMessage()];
-        
-        if ($e instanceof ValidationException) {
-            http_response_code(400);
-        } elseif ($e instanceof NotFoundException) {
-            http_response_code(404);
-        } elseif ($e instanceof AuthException) {
-            http_response_code(403);
-        } else {
-            http_response_code(500);
-            if (!$this->config['debug']) {
-                $response['message'] = 'Internal server error';
-            }
         }
         
         echo json_encode($response, JSON_PRETTY_PRINT);
