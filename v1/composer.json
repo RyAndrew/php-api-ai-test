@@ -1,0 +1,15 @@
+{
+    "name": "php-api-ai-test",
+    "version": "0.1.0",
+    "description": "An API Made by AI",
+    "require": {
+        "firebase/php-jwt": "^6.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "psr/cache": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
